@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IB Learning Assistant - Educational Tutor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.95;
+        }
+
+        .info-banner {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #ffc107;
+            font-size: 0.9em;
+        }
+
+        .info-banner strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .controls {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .controls select, .controls input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .controls select {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .api-key-input {
+            flex: 2;
+            min-width: 200px;
+        }
+
+        .save-key-btn {
+            padding: 8px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .save-key-btn:hover {
+            background: #218838;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+        }
+
+        .message.system .message-content {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            max-width: 100%;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper textarea {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            resize: none;
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+
+        .input-wrapper textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #5568d3;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            gap: 5px;
+            padding: 15px;
+        }
+
+        .loading span {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading span:nth-child(1) { animation-delay: -0.32s; }
+        .loading span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .guidelines {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+
+        .guidelines ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: 95vh;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls select, .controls input {
+                width: 100%;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>IB Learning Assistant</h1>
+            <p>Your Educational Tutor - Guiding You to Understand, Not Just Answer</p>
+        </div>
+
+        <div class="info-banner">
+            <strong>This tool helps you LEARN, not cheat!</strong>
+            It will guide you with questions, hints, and explanations - but won't do your work for you.
+        </div>
+
+        <div class="controls">
+            <select id="subject">
+                <option value="general">General IB Support</option>
+                <option value="math">Mathematics (AA/AI)</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+                <option value="english">English A</option>
+                <option value="history">History</option>
+                <option value="economics">Economics</option>
+                <option value="psychology">Psychology</option>
+                <option value="tok">Theory of Knowledge (TOK)</option>
+                <option value="ee">Extended Essay</option>
+            </select>
+            <input type="password" id="apiKey" class="api-key-input" placeholder="Enter your OpenAI API Key">
+            <button class="save-key-btn" onclick="saveApiKey()">Save Key</button>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message system">
+                <div class="message-content">
+                    <div class="guidelines">
+                        <strong>How This Tutor Works:</strong>
+                        <ul>
+                            <li>Asks guiding questions to help you think critically</li>
+                            <li>Provides hints and explains concepts instead of giving direct answers</li>
+                            <li>Encourages the IB learner profile: inquirers, thinkers, communicators</li>
+                            <li>Follows Socratic teaching methods</li>
+                            <li>Will NOT write essays, solve homework problems directly, or enable academic dishonesty</li>
+                        </ul>
+                    </div>
+                    <p><strong>Get started:</strong> Enter your OpenAI API key above (get one at platform.openai.com), select your subject, and ask a question!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="userInput" rows="3" placeholder="Ask a question about a concept you're struggling with..."></textarea>
+                <button class="send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let apiKey = localStorage.getItem('openai_api_key') || '';
+        let conversationHistory = [];
+
+        if (apiKey) {
+            document.getElementById('apiKey').value = apiKey;
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (key) {
+                apiKey = key;
+                localStorage.setItem('openai_api_key', key);
+                addSystemMessage('API Key saved successfully!');
+            } else {
+                alert('Please enter a valid API key');
+            }
+        }
+
+        function getSystemPrompt() {
+            const subject = document.getElementById('subject').value;
+
+            const basePrompt = `You are an IB (International Baccalaureate) educational tutor designed to help students LEARN, not cheat. Your role is to guide students to understanding through the Socratic method.
+
+CRITICAL RULES - You MUST follow these:
+1. NEVER provide direct answers to homework problems, essay questions, or assignments
+2. NEVER write essays, lab reports, or complete solutions for students
+3. ALWAYS respond with guiding questions that lead students to discover answers themselves
+4. Provide hints, break down complex concepts, and explain underlying principles
+5. If a student asks you to "do their homework" or "write this for them", politely refuse and offer to help them understand the concepts instead
+6. Encourage critical thinking aligned with IB learner profile: inquirers, knowledgeable, thinkers, communicators, principled
+7. When explaining concepts, use examples and analogies, but make students apply them
+8. Check understanding by asking follow-up questions
+9. Celebrate when students show they're thinking through problems themselves
+
+YOUR TEACHING APPROACH:
+- Ask "What do you think?" and "Why might that be?"
+- Break problems into smaller steps
+- Point students toward relevant resources
+- Explain one concept at a time
+- Use real-world connections
+- Encourage them to show their thinking process`;
+
+            const subjectAddons = {
+                'math': '\n\nFor Mathematics: Guide through problem-solving strategies, help identify which formulas/theorems apply, but make students do calculations. Focus on understanding WHY methods work.',
+                'physics': '\n\nFor Physics: Help with conceptual understanding, guide through free-body diagrams, explain physical principles, but students must set up and solve equations themselves.',
+                'chemistry': '\n\nFor Chemistry: Explain mechanisms, bonding concepts, and periodic trends. Guide through stoichiometry steps but make students calculate. Focus on understanding reactions, not memorizing.',
+                'biology': '\n\nFor Biology: Help make connections between systems, explain processes like respiration/photosynthesis conceptually. Encourage understanding of HOW and WHY, not just memorization.',
+                'english': '\n\nFor English: Guide literary analysis by asking about themes, techniques, and author choices. Help structure thinking but NEVER write essays. Ask "What evidence supports this?" "What technique is used here?"',
+                'history': '\n\nFor History: Guide source analysis, help identify bias and perspectives (OPCVL), discuss causes/consequences, but students must form their own arguments and write their own essays.',
+                'economics': '\n\nFor Economics: Explain economic concepts, guide through diagram analysis, help understand market forces, but students must apply concepts and draw diagrams themselves.',
+                'tok': '\n\nFor TOK: Ask probing questions about knowledge claims, areas of knowledge, and ways of knowing. Help students explore different perspectives but never provide essay outlines.',
+                'ee': '\n\nFor Extended Essay: Guide research question development, explain methodology, discuss structure, but students must do their own research and writing. Focus on critical thinking and analysis.',
+                'psychology': '\n\nFor Psychology: Explain theories and studies, guide evaluation (strengths/limitations), help understand research methods, but students must apply concepts to scenarios themselves.',
+                'general': ''
+            };
+
+            return basePrompt + (subjectAddons[subject] || '');
+        }
+
+        function addMessage(role, content) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = content.replace(/\n/g, '<br>');
+
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addSystemMessage(content) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message system';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showLoading() {
+            const chatContainer = document.getElementById('chatContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message assistant';
+            loadingDiv.id = 'loading';
+            loadingDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="loading">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeLoading() {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.remove();
+            }
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput').value.trim();
+
+            if (!userInput) {
+                alert('Please enter a message');
+                return;
+            }
+
+            if (!apiKey) {
+                alert('Please enter and save your OpenAI API key first');
+                return;
+            }
+
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+
+            addMessage('user', userInput);
+            document.getElementById('userInput').value = '';
+
+            conversationHistory.push({
+                role: 'user',
+                content: userInput
+            });
+
+            showLoading();
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: getSystemPrompt()
+                            },
+                            ...conversationHistory
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 800
+                    })
+                });
+
+                removeLoading();
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error?.message || 'API request failed');
+                }
+
+                const data = await response.json();
+                const assistantMessage = data.choices[0].message.content;
+
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: assistantMessage
+                });
+
+                addMessage('assistant', assistantMessage);
+
+            } catch (error) {
+                removeLoading();
+                addSystemMessage(`Error: ${error.message}. Please check your API key and try again.`);
+                console.error('Error:', error);
+            }
+
+            sendBtn.disabled = false;
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.getElementById('subject').addEventListener('change', function() {
+            conversationHistory = [];
+            addSystemMessage(`Switched to ${this.options[this.selectedIndex].text}. Your tutor is now specialized for this subject.`);
+        });
+    </script>
+</body>
+</html>
