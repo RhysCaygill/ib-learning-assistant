@@ -64,6 +64,26 @@
             margin-bottom: 5px;
         }
 
+        .citation-banner {
+            background: #fff9e6;
+            color: #856404;
+            padding: 12px 20px;
+            text-align: center;
+            border-bottom: 2px solid #ffc107;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+
+        .citation-banner strong {
+            color: #dc3545;
+            font-weight: 700;
+        }
+
+        .citation-banner a {
+            color: #667eea;
+            text-decoration: underline;
+        }
+
         .controls {
             padding: 15px;
             background: #f8f9fa;
@@ -208,6 +228,156 @@
             margin-top: 5px;
         }
 
+        /* Main content wrapper for sidebar + chat */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Resource Sidebar */
+        .resource-sidebar {
+            width: 320px;
+            background: #f8f9fa;
+            border-right: 2px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .resource-sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .close-sidebar-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-sidebar-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .resource-category {
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-icon {
+            font-size: 1.2em;
+        }
+
+        .resource-link {
+            display: block;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .resource-link:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+            transform: translateX(2px);
+        }
+
+        .resource-link-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 3px;
+            font-size: 0.9em;
+        }
+
+        .resource-link-desc {
+            font-size: 0.8em;
+            color: #666;
+            line-height: 1.3;
+        }
+
+        /* Open Sidebar Button */
+        .open-sidebar-btn {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .open-sidebar-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .open-sidebar-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Chat wrapper */
+        .chat-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         @media (max-width: 768px) {
             .container {
                 height: 95vh;
@@ -224,6 +394,23 @@
             .message-content {
                 max-width: 85%;
             }
+
+            .resource-sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 280px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+
+            .resource-sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+
+            .chat-wrapper {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -237,6 +424,11 @@
         <div class="info-banner">
             <strong>This tool helps you LEARN, not cheat!</strong>
             It will guide you with questions, hints, and explanations - but won't do your work for you.
+        </div>
+
+        <div class="citation-banner">
+            <strong>⚠️ IB Academic Integrity Requirement:</strong> You MUST cite any AI assistance in your work. Include: the prompt you used, the date, and "IB Learning Assistant (Google Gemini AI)" as the tool name. Not citing AI assistance = academic misconduct.
+            <a href="https://www.ibo.org/programmes/diploma-programme/curriculum/academic-integrity/" target="_blank" rel="noopener">Learn more about IB Academic Integrity</a>
         </div>
 
         <div class="controls">
@@ -258,28 +450,49 @@
             </div>
         </div>
 
-        <div class="chat-container" id="chatContainer">
-            <div class="message system">
-                <div class="message-content">
-                    <div class="guidelines">
-                        <strong>How This Tutor Works:</strong>
-                        <ul>
-                            <li>Asks guiding questions to help you think critically</li>
-                            <li>Provides hints and explains concepts instead of giving direct answers</li>
-                            <li>Encourages the IB learner profile: inquirers, thinkers, communicators</li>
-                            <li>Follows Socratic teaching methods</li>
-                            <li>Will NOT write essays, solve homework problems directly, or enable academic dishonesty</li>
-                        </ul>
-                    </div>
-                    <p><strong>Get started:</strong> Select your subject and ask a question!</p>
+        <div class="main-content">
+            <!-- Resource Sidebar -->
+            <div class="resource-sidebar collapsed" id="resourceSidebar">
+                <div class="sidebar-header">
+                    <h3 id="resourceTitle">Study Resources</h3>
+                    <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+                </div>
+                <div class="sidebar-content" id="sidebarContent">
+                    <!-- Dynamically populated resources -->
                 </div>
             </div>
-        </div>
 
-        <div class="input-area">
-            <div class="input-wrapper">
-                <textarea id="userInput" rows="3" placeholder="Ask a question about a concept you're struggling with..."></textarea>
-                <button class="send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+            <!-- Open Sidebar Button -->
+            <button class="open-sidebar-btn visible" id="openSidebarBtn" onclick="toggleSidebar()">
+                📚 Resources
+            </button>
+
+            <!-- Chat Wrapper -->
+            <div class="chat-wrapper">
+                <div class="chat-container" id="chatContainer">
+                    <div class="message system">
+                        <div class="message-content">
+                            <div class="guidelines">
+                                <strong>How This Tutor Works:</strong>
+                                <ul>
+                                    <li>Asks guiding questions to help you think critically</li>
+                                    <li>Provides hints and explains concepts instead of giving direct answers</li>
+                                    <li>Encourages the IB learner profile: inquirers, thinkers, communicators</li>
+                                    <li>Follows Socratic teaching methods</li>
+                                    <li>Will NOT write essays, solve homework problems directly, or enable academic dishonesty</li>
+                                </ul>
+                            </div>
+                            <p><strong>Get started:</strong> Select your subject and ask a question!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <textarea id="userInput" rows="3" placeholder="Ask a question about a concept you're struggling with..."></textarea>
+                        <button class="send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -289,6 +502,424 @@
         const GEMINI_API_KEY = 'AIzaSyC1ksQwK5iY6Xb7OY-sxPz9F3J6vqYROvc';
         let conversationHistory = [];
         let sidebarCollapsed = true;
+
+        // Study Resources Data Structure
+        const studyResources = {
+            general: {
+                title: "General IB Support",
+                categories: [
+                    {
+                        name: "Official IB Resources",
+                        icon: "📚",
+                        links: [
+                            { title: "IB Learner Profile", url: "https://www.ibo.org/benefits/learner-profile/", description: "Core attributes of IB learners" },
+                            { title: "IB Programme Standards", url: "https://www.ibo.org/programmes/", description: "Official IB programme information" },
+                            { title: "IB Command Terms", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/", description: "Define, Explain, Analyze, Evaluate, etc." }
+                        ]
+                    },
+                    {
+                        name: "Study Skills",
+                        icon: "🎯",
+                        links: [
+                            { title: "Time Management Tips", url: "https://www.ibo.org/programmes/diploma-programme/", description: "Balancing CAS, EE, and coursework" },
+                            { title: "Effective Note-Taking", url: "https://www.ibo.org/programmes/diploma-programme/", description: "Strategies for IB success" }
+                        ]
+                    }
+                ]
+            },
+            math: {
+                title: "Mathematics (AA/AI)",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - Past Papers", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/", description: "Past papers 2014-present" },
+                            { title: "Save My Exams - IB Math", url: "https://www.savemyexams.com/international-baccalaureate/", description: "Organized past paper questions by topic" }
+                        ]
+                    },
+                    {
+                        name: "Revision Notes",
+                        icon: "📖",
+                        links: [
+                            { title: "IB Math AA Revision Notes", url: "https://www.savemyexams.com/international-baccalaureate/mathematics-analysis-and-approaches/", description: "Comprehensive notes for Math AA" },
+                            { title: "IB Math AI Revision Notes", url: "https://www.savemyexams.com/international-baccalaureate/mathematics-applications-and-interpretation/", description: "Comprehensive notes for Math AI" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Math IA Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/mathematics/", description: "Internal Assessment rubric" }
+                        ]
+                    },
+                    {
+                        name: "Practice Resources",
+                        icon: "💪",
+                        links: [
+                            { title: "Khan Academy - Calculus", url: "https://www.khanacademy.org/math/calculus-1", description: "Video tutorials and practice" },
+                            { title: "GeoGebra", url: "https://www.geogebra.org/", description: "Interactive geometry and graphing" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "3Blue1Brown - Calculus", url: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr", description: "Visual explanations of calculus concepts" }
+                        ]
+                    }
+                ]
+            },
+            physics: {
+                title: "Physics",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - Physics", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%204%20-%20Sciences/Physics_SL/", description: "Past papers and mark schemes" },
+                            { title: "Save My Exams - IB Physics", url: "https://www.savemyexams.com/international-baccalaureate/physics/", description: "Topic-organized questions" }
+                        ]
+                    },
+                    {
+                        name: "Revision Notes",
+                        icon: "📖",
+                        links: [
+                            { title: "IB Physics Revision Notes", url: "https://www.savemyexams.com/international-baccalaureate/physics/", description: "Complete syllabus notes" },
+                            { title: "Physics & Maths Tutor", url: "https://www.physicsandmathstutor.com/", description: "Notes and worksheets" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Physics IA Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/sciences/", description: "Internal Assessment rubric" },
+                            { title: "Physics Data Booklet", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/sciences/physics/", description: "Official formula sheet" }
+                        ]
+                    },
+                    {
+                        name: "Interactive Tools",
+                        icon: "🔬",
+                        links: [
+                            { title: "PhET Simulations", url: "https://phet.colorado.edu/", description: "Interactive physics simulations" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course Physics", url: "https://www.youtube.com/playlist?list=PL8dPuuaLjXtN0ge7yDk_UA0ldZJdhwkoV", description: "Comprehensive physics video series" },
+                            { title: "Khan Academy Physics", url: "https://www.khanacademy.org/science/physics", description: "Video lessons and practice" }
+                        ]
+                    }
+                ]
+            },
+            chemistry: {
+                title: "Chemistry",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - Chemistry", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%204%20-%20Sciences/Chemistry_SL/", description: "Past papers and mark schemes" },
+                            { title: "Save My Exams - IB Chemistry", url: "https://www.savemyexams.com/international-baccalaureate/chemistry/", description: "Topic questions" }
+                        ]
+                    },
+                    {
+                        name: "Revision Notes",
+                        icon: "📖",
+                        links: [
+                            { title: "IB Chemistry Revision Notes", url: "https://www.savemyexams.com/international-baccalaureate/chemistry/", description: "Complete syllabus coverage" },
+                            { title: "ChemGuide", url: "https://www.chemguide.co.uk/", description: "Detailed chemistry explanations" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Chemistry IA Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/sciences/", description: "Internal Assessment rubric" },
+                            { title: "Chemistry Data Booklet", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/sciences/chemistry/", description: "Official data tables" }
+                        ]
+                    },
+                    {
+                        name: "Interactive Tools",
+                        icon: "⚗️",
+                        links: [
+                            { title: "PhET Chemistry Simulations", url: "https://phet.colorado.edu/en/simulations/filter?subjects=chemistry", description: "Interactive chemistry labs" },
+                            { title: "Periodic Table (PTable)", url: "https://ptable.com/", description: "Interactive periodic table" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course Chemistry", url: "https://www.youtube.com/playlist?list=PL8dPuuaLjXtPHzzYuWy6fYEaX9mQQ8oGr", description: "Video series covering chemistry topics" },
+                            { title: "Khan Academy Chemistry", url: "https://www.khanacademy.org/science/chemistry", description: "Comprehensive chemistry lessons" }
+                        ]
+                    }
+                ]
+            },
+            biology: {
+                title: "Biology",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - Biology", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%204%20-%20Sciences/Biology_SL/", description: "Past papers and mark schemes" },
+                            { title: "Save My Exams - IB Biology", url: "https://www.savemyexams.com/international-baccalaureate/biology/", description: "Topic-based questions" }
+                        ]
+                    },
+                    {
+                        name: "Revision Notes",
+                        icon: "📖",
+                        links: [
+                            { title: "IB Biology Revision Notes", url: "https://www.savemyexams.com/international-baccalaureate/biology/", description: "Full syllabus notes" },
+                            { title: "Bioninja", url: "https://ib.bioninja.com.au/", description: "IB-specific biology resource" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Biology IA Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/sciences/", description: "Internal Assessment rubric" }
+                        ]
+                    },
+                    {
+                        name: "Interactive Tools",
+                        icon: "🔬",
+                        links: [
+                            { title: "PhET Biology Simulations", url: "https://phet.colorado.edu/en/simulations/filter?subjects=biology", description: "Interactive biology simulations" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course Biology", url: "https://www.youtube.com/playlist?list=PL3EED4C1D684D3ADF", description: "Comprehensive biology videos" },
+                            { title: "Khan Academy Biology", url: "https://www.khanacademy.org/science/biology", description: "Biology lessons and practice" },
+                            { title: "Amoeba Sisters", url: "https://www.youtube.com/user/AmoebaSisters", description: "Engaging biology animations" }
+                        ]
+                    }
+                ]
+            },
+            english: {
+                title: "English A",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - English A", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%201%20-%20Studies%20in%20Language%20and%20Literature/", description: "Past papers and mark schemes" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Paper 1 Criteria (Analysis)", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/language-and-literature/", description: "Unseen text analysis rubric" },
+                            { title: "Paper 2 Criteria (Essay)", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/language-and-literature/", description: "Comparative essay rubric" },
+                            { title: "Individual Oral Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/language-and-literature/", description: "IO assessment rubric" }
+                        ]
+                    },
+                    {
+                        name: "Literary Analysis",
+                        icon: "📝",
+                        links: [
+                            { title: "Literary Devices", url: "https://literarydevices.net/", description: "Comprehensive list with examples" },
+                            { title: "Purdue OWL - Literary Analysis", url: "https://owl.purdue.edu/owl/subject_specific_writing/writing_in_literature/", description: "Academic writing guide" }
+                        ]
+                    },
+                    {
+                        name: "Study Guides",
+                        icon: "📖",
+                        links: [
+                            { title: "SparkNotes", url: "https://www.sparknotes.com/", description: "Literary analysis and summaries" },
+                            { title: "LitCharts", url: "https://www.litcharts.com/", description: "Detailed literary analysis" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course Literature", url: "https://www.youtube.com/playlist?list=PL8dPuuaLjXtOeEc9ME62zTfqc0h6Pe8vb", description: "Literary analysis videos" }
+                        ]
+                    }
+                ]
+            },
+            history: {
+                title: "History",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - History", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%203%20-%20Individuals%20and%20Societies/History_SL/", description: "Past papers by route" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "History IA Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/individuals-and-societies/history/", description: "Historical Investigation rubric" },
+                            { title: "Paper 1 Source Analysis", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/individuals-and-societies/history/", description: "OPCVL methodology" },
+                            { title: "Paper 2 Essay Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/individuals-and-societies/history/", description: "Comparative essay rubric" }
+                        ]
+                    },
+                    {
+                        name: "Revision Resources",
+                        icon: "📖",
+                        links: [
+                            { title: "Alpha History", url: "https://alphahistory.com/", description: "Topic-specific history resources" },
+                            { title: "History Learning Site", url: "https://www.historylearningsite.co.uk/", description: "Comprehensive history notes" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course World History", url: "https://www.youtube.com/playlist?list=PLBDA2E52FB1EF80C9", description: "World history video series" },
+                            { title: "Crash Course European History", url: "https://www.youtube.com/playlist?list=PL8dPuuaLjXtMsMTfmRomkVQG8AqrAmJFX", description: "European history videos" }
+                        ]
+                    }
+                ]
+            },
+            economics: {
+                title: "Economics",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - Economics", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%203%20-%20Individuals%20and%20Societies/Economics_SL/", description: "Past papers and mark schemes" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Economics IA Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/individuals-and-societies/economics/", description: "Commentary rubric" },
+                            { title: "Paper 1 Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/individuals-and-societies/economics/", description: "Extended response rubric" }
+                        ]
+                    },
+                    {
+                        name: "Revision Notes",
+                        icon: "📖",
+                        links: [
+                            { title: "Economics Online", url: "https://www.economicsonline.co.uk/", description: "Comprehensive economics notes" },
+                            { title: "Tutor2u Economics", url: "https://www.tutor2u.net/economics", description: "Economics revision resources" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course Economics", url: "https://www.youtube.com/playlist?list=PL8dPuuaLjXtPNZwz5_o_5uirJ8gQXnhEO", description: "Economics concepts explained" },
+                            { title: "Khan Academy Economics", url: "https://www.khanacademy.org/economics-finance-domain", description: "Microeconomics and macroeconomics" }
+                        ]
+                    }
+                ]
+            },
+            psychology: {
+                title: "Psychology",
+                categories: [
+                    {
+                        name: "Past Papers",
+                        icon: "📄",
+                        links: [
+                            { title: "IB Documents - Psychology", url: "https://www.ibdocuments.com/IB%20PAST%20PAPERS%20-%20SUBJECT/Group%203%20-%20Individuals%20and%20Societies/Psychology_SL/", description: "Past papers and mark schemes" }
+                        ]
+                    },
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "Psychology IA Criteria", url: "https://www.ibo.org/programmes/dp/curriculum/individuals-and-societies/psychology/", description: "Experimental study rubric" },
+                            { title: "SAQ and ERQ Criteria", url: "https://www.ibo.org/programmes/dp/curriculum/individuals-and-societies/psychology/", description: "Short and extended response rubrics" }
+                        ]
+                    },
+                    {
+                        name: "Study Resources",
+                        icon: "📖",
+                        links: [
+                            { title: "Simply Psychology", url: "https://www.simplypsychology.org/", description: "Psychology theories and studies" },
+                            { title: "IB Psychology Notes", url: "https://www.themantic-education.com/ibpsych/", description: "IB-specific psychology resource" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Crash Course Psychology", url: "https://www.youtube.com/playlist?list=PL8dPuuaLjXtOPRKzVLY0jJY-uHOH9KVU6", description: "Comprehensive psychology series" },
+                            { title: "Khan Academy MCAT Psychology", url: "https://www.khanacademy.org/test-prep/mcat/behavior", description: "Psychology fundamentals" }
+                        ]
+                    }
+                ]
+            },
+            tok: {
+                title: "Theory of Knowledge (TOK)",
+                categories: [
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "TOK Essay Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/theory-of-knowledge/", description: "Essay assessment rubric" },
+                            { title: "TOK Exhibition Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/theory-of-knowledge/", description: "Exhibition assessment rubric" }
+                        ]
+                    },
+                    {
+                        name: "Core Concepts",
+                        icon: "💭",
+                        links: [
+                            { title: "TOK Resource", url: "https://www.tokresource.org/", description: "Comprehensive TOK materials" }
+                        ]
+                    },
+                    {
+                        name: "Video Resources",
+                        icon: "🎥",
+                        links: [
+                            { title: "Wireless Philosophy", url: "https://www.youtube.com/user/WirelessPhilosophy", description: "Philosophy and epistemology videos" }
+                        ]
+                    }
+                ]
+            },
+            ee: {
+                title: "Extended Essay",
+                categories: [
+                    {
+                        name: "Assessment Criteria",
+                        icon: "✓",
+                        links: [
+                            { title: "EE Assessment Criteria", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/extended-essay/", description: "Complete rubric breakdown" },
+                            { title: "Subject-Specific Guides", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/extended-essay/", description: "Guidelines for each subject" }
+                        ]
+                    },
+                    {
+                        name: "Research Process",
+                        icon: "🔍",
+                        links: [
+                            { title: "Google Scholar", url: "https://scholar.google.com/", description: "Academic search engine for research" },
+                            { title: "Purdue OWL - Citations", url: "https://owl.purdue.edu/owl/purdue_owl.html", description: "MLA, APA, Chicago citation guides" }
+                        ]
+                    },
+                    {
+                        name: "Planning & Structure",
+                        icon: "📋",
+                        links: [
+                            { title: "EE Exemplars", url: "https://www.ibo.org/programmes/diploma-programme/curriculum/extended-essay/", description: "Sample high-scoring essays" }
+                        ]
+                    },
+                    {
+                        name: "Academic Writing",
+                        icon: "✍️",
+                        links: [
+                            { title: "Purdue OWL", url: "https://owl.purdue.edu/owl/purdue_owl.html", description: "Academic writing resources" }
+                        ]
+                    }
+                ]
+            }
+        };
+
 
         function getSystemPrompt() {
             const subject = document.getElementById('subject').value;
@@ -306,25 +937,34 @@ CRITICAL RULES - You MUST follow these:
 8. Check understanding by asking follow-up questions
 9. Celebrate when students show they're thinking through problems themselves
 
+IB ACADEMIC INTEGRITY POLICY - CRITICAL:
+- Students MUST cite this AI tool in any submitted work that uses this assistance
+- Required citation format: prompt used, date, and tool name "IB Learning Assistant (Google Gemini AI)"
+- Failure to cite AI assistance = academic misconduct under IB policy
+- You should remind students about citation requirements if they're working on assessments
+- NEVER help translate essays between languages (prohibited by IB policy)
+- For language acquisition subjects: Grammar tools and AI translation are NOT permitted
+
 YOUR TEACHING APPROACH:
 - Ask "What do you think?" and "Why might that be?"
 - Break problems into smaller steps
 - Point students toward relevant resources
 - Explain one concept at a time
 - Use real-world connections
-- Encourage them to show their thinking process`;
+- Encourage them to show their thinking process
+- Remind students about IB citation requirements when discussing assessed work`;
 
             const subjectAddons = {
-                'math': '\n\nFor Mathematics: Guide through problem-solving strategies, help identify which formulas/theorems apply, but make students do calculations. Focus on understanding WHY methods work.',
-                'physics': '\n\nFor Physics: Help with conceptual understanding, guide through free-body diagrams, explain physical principles, but students must set up and solve equations themselves.',
-                'chemistry': '\n\nFor Chemistry: Explain mechanisms, bonding concepts, and periodic trends. Guide through stoichiometry steps but make students calculate. Focus on understanding reactions, not memorizing.',
-                'biology': '\n\nFor Biology: Help make connections between systems, explain processes like respiration/photosynthesis conceptually. Encourage understanding of HOW and WHY, not just memorization.',
-                'english': '\n\nFor English: Guide literary analysis by asking about themes, techniques, and author choices. Help structure thinking but NEVER write essays. Ask "What evidence supports this?" "What technique is used here?"',
-                'history': '\n\nFor History: Guide source analysis, help identify bias and perspectives (OPCVL), discuss causes/consequences, but students must form their own arguments and write their own essays.',
-                'economics': '\n\nFor Economics: Explain economic concepts, guide through diagram analysis, help understand market forces, but students must apply concepts and draw diagrams themselves.',
-                'tok': '\n\nFor TOK: Ask probing questions about knowledge claims, areas of knowledge, and ways of knowing. Help students explore different perspectives but never provide essay outlines.',
-                'ee': '\n\nFor Extended Essay: Guide research question development, explain methodology, discuss structure, but students must do their own research and writing. Focus on critical thinking and analysis.',
-                'psychology': '\n\nFor Psychology: Explain theories and studies, guide evaluation (strengths/limitations), help understand research methods, but students must apply concepts to scenarios themselves.',
+                'math': '\n\nFor Mathematics: Guide through problem-solving strategies, help identify which formulas/theorems apply, but make students do calculations. Focus on understanding WHY methods work. REFUSE: Direct homework solutions, completed calculations.',
+                'physics': '\n\nFor Physics: Help with conceptual understanding, guide through free-body diagrams, explain physical principles, but students must set up and solve equations themselves. REFUSE: Complete problem solutions, lab report writing.',
+                'chemistry': '\n\nFor Chemistry: Explain mechanisms, bonding concepts, and periodic trends. Guide through stoichiometry steps but make students calculate. Focus on understanding reactions, not memorizing. REFUSE: Lab report writing, completed calculations.',
+                'biology': '\n\nFor Biology: Help make connections between systems, explain processes like respiration/photosynthesis conceptually. Encourage understanding of HOW and WHY, not just memorization. REFUSE: Lab report writing, direct answers to questions.',
+                'english': '\n\nFor English A - LANGUAGE SUBJECT RESTRICTIONS: You may discuss literary concepts, themes, and techniques, but NEVER write essay paragraphs, introductions, or conclusions for students. NEVER help translate essays or text between languages (IB policy violation). NEVER provide grammar correction as a service. Guide analysis with questions like "What evidence supports this?" "What technique is used here?" REFUSE: Essay writing, translation, grammar checking, Paper 1/2 answers.',
+                'history': '\n\nFor History: Guide source analysis, help identify bias and perspectives (OPCVL), discuss causes/consequences, but students must form their own arguments and write their own essays. REFUSE: Essay writing, IA writing, complete OPCVL analyses.',
+                'economics': '\n\nFor Economics: Explain economic concepts, guide through diagram analysis, help understand market forces, but students must apply concepts and draw diagrams themselves. REFUSE: Complete commentary writing, diagram solutions.',
+                'tok': '\n\nFor TOK: Ask probing questions about knowledge claims, areas of knowledge, and ways of knowing. Help students explore different perspectives but never provide essay outlines. REFUSE: Essay writing, exhibition commentary writing, providing arguments.',
+                'ee': '\n\nFor Extended Essay: Guide research question development, explain methodology, discuss structure, but students must do their own research and writing. Focus on critical thinking and analysis. REFUSE: Writing any section of the essay, doing research for students.',
+                'psychology': '\n\nFor Psychology: Explain theories and studies, guide evaluation (strengths/limitations), help understand research methods, but students must apply concepts to scenarios themselves. REFUSE: IA writing, SAQ/ERQ answers.',
                 'general': ''
             };
 
@@ -472,9 +1112,83 @@ YOUR TEACHING APPROACH:
             }
         });
 
+        // Toggle sidebar visibility
+        function toggleSidebar() {
+            const sidebar = document.getElementById('resourceSidebar');
+            const openBtn = document.getElementById('openSidebarBtn');
+
+            sidebarCollapsed = !sidebarCollapsed;
+
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                openBtn.classList.add('visible');
+            } else {
+                sidebar.classList.remove('collapsed');
+                openBtn.classList.remove('visible');
+            }
+        }
+
+        // Update resource sidebar based on selected subject
+        function updateResourceSidebar() {
+            const subject = document.getElementById('subject').value;
+            const sidebarContent = document.getElementById('sidebarContent');
+            const resourceTitle = document.getElementById('resourceTitle');
+
+            const resources = studyResources[subject];
+
+            if (!resources) {
+                sidebarContent.innerHTML = '<p style="padding: 10px; color: #666;">No resources available for this subject.</p>';
+                return;
+            }
+
+            resourceTitle.textContent = resources.title;
+
+            let html = '';
+
+            resources.categories.forEach(category => {
+                html += `
+                    <div class="resource-category">
+                        <div class="category-header">
+                            <span class="category-icon">${category.icon}</span>
+                            <span>${category.name}</span>
+                        </div>
+                        ${category.links.map(link => `
+                            <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="resource-link">
+                                <div class="resource-link-title">${link.title}</div>
+                                <div class="resource-link-desc">${link.description}</div>
+                            </a>
+                        `).join('')}
+                    </div>
+                `;
+            });
+
+            sidebarContent.innerHTML = html;
+        }
+
+        // Initialize resources on page load
+        function initializeResources() {
+            updateResourceSidebar();
+        }
+
+        // Call initialization when DOM is ready
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeResources();
+        });
+
         document.getElementById('subject').addEventListener('change', function() {
             conversationHistory = [];
-            addSystemMessage(`Switched to ${this.options[this.selectedIndex].text}. Your tutor is now specialized for this subject.`);
+            updateResourceSidebar();
+            const selectedSubject = this.value;
+            const subjectName = this.options[this.selectedIndex].text;
+
+            let message = `Switched to ${subjectName}. Your tutor is now specialized for this subject.`;
+
+            // Add IB policy warnings for language subjects
+            if (selectedSubject === 'english') {
+                message += '\n\n⚠️ LANGUAGE SUBJECT WARNING: Under IB policy, AI grammar tools and translation are NOT permitted for language subjects. This tutor will NOT write essays, provide grammar corrections, or translate text for you.';
+            }
+
+            addSystemMessage(message);
         });
     </script>
 </body>
